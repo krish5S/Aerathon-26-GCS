@@ -360,7 +360,10 @@ def run(args, *, on_state=None, on_frames=None, stop_event=None):
                     elif target_index==len(route)-1:
                         phase='RETURN'
                 else:
-                    velocity=delta*min(1.5,args.speed/max(np.linalg.norm(delta),1e-6))
+                    distance=max(np.linalg.norm(delta),1e-6)
+                    # Cruise at the operator-selected survey speed, then
+                    # ease off inside the final meter before each waypoint.
+                    velocity=delta*min(args.speed,args.speed/distance)
                     c,s=math.cos(pose.yaw),math.sin(pose.yaw)
                     vehicle.send_velocity_body(c*velocity[0]+s*velocity[1],-s*velocity[0]+c*velocity[1],-velocity[2])
             vehicle.step(DT)
