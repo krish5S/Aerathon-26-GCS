@@ -1,4 +1,4 @@
-# Phoenix GCS — Flood Mission Simulation
+# Aerathon 26 GCS — Phoenix Flood Mission Simulation
 
 This repository runs one local, simulated flood rescue mission. It opens on the full Cesium globe, with `mock_arena_geofence.kml` as the default mission area and a PyBullet flood world.
 
