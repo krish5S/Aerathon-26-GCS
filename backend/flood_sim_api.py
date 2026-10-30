@@ -173,7 +173,9 @@ class FloodSimulationManager:
             args.realtime = realtime
             args.altitude = altitude
             args.speed = speed
-            args.fps = 5.0
+            # Keep PyBullet's 60 Hz motion/collision step intact, but reduce
+            # expensive camera rendering for small shared demo instances.
+            args.fps = 2.5
             args.max_seconds = 1800.0
             args.no_video = True
             args.output = session.output_dir

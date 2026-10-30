@@ -498,15 +498,17 @@ export default function FloodMissionGCS() {
           const pose = state?.pose;
           if (pose && Number.isFinite(state?.sim_time) && Number.isFinite(pose.x) && Number.isFinite(pose.y)) {
             const previous = speedSample.current;
-            if (previous?.sessionId === data.session_id && state.sim_time > previous.simTime) {
+            const currentSample = { sessionId: data.session_id, simTime: state.sim_time, x: pose.x, y: pose.y };
+            if (previous?.sessionId !== data.session_id) {
+              setGroundSpeed(null);
+              speedSample.current = currentSample;
+            } else if (state.sim_time > previous.simTime) {
               const deltaTime = state.sim_time - previous.simTime;
               if (deltaTime >= 0.05) {
                 setGroundSpeed(Math.hypot(pose.x - previous.x, pose.y - previous.y) / deltaTime);
+                speedSample.current = currentSample;
               }
-            } else {
-              setGroundSpeed(null);
             }
-            speedSample.current = { sessionId: data.session_id, simTime: state.sim_time, x: pose.x, y: pose.y };
           }
           setMission((current) => ({ ...current, ...data }));
         }
@@ -537,7 +539,7 @@ export default function FloodMissionGCS() {
       if (!cancelled) setCameraStamp(Date.now());
     };
     poll();
-    const timer = window.setInterval(poll, 450);
+    const timer = window.setInterval(poll, 600);
     return () => { cancelled = true; window.clearInterval(timer); };
   }, [mission?.session_id, mission?.status]);
 
